@@ -7,6 +7,11 @@ module.exports = {
         // req.check('email', 'ایمیل را درست وارد کنید.').isEmail();
         // req.check('name', 'نام خود را وارد کنید.').notEmpty();
         // req.check('text', 'متن پیام را بنویسید.').notEmpty();
+
+        console.log(req.body);
+
+        return;
+
         const errors = req.validationErrors();
         if (errors) {
             return res.status(401).send({
@@ -32,6 +37,7 @@ module.exports = {
         }
     },
     async getComments(req, res) {
+        console.log('here');
         let comments = await Comments.findAll().catch(e => {
             return res.json({ msg: 'خطایی رخ داد' });
         });
