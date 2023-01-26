@@ -8,38 +8,34 @@ module.exports = {
         // req.check('name', 'نام خود را وارد کنید.').notEmpty();
         // req.check('text', 'متن پیام را بنویسید.').notEmpty();
 
-        console.log(req.body);
+        // const errors = req.validationErrors();
+        // if (errors) {
+        //     return res.status(401).send({
+        //         error: errors,
+        //     });
+        // }
 
-        return;
+        const { text, parent_id, user_id } = req.body;
 
-        const errors = req.validationErrors();
-        if (errors) {
-            return res.status(401).send({
-                error: errors,
-            });
-        }
-        let email = req.body.email;
-        let name = req.body.name;
-        let text = req.body.text;
-        let parent_id = req.body.parent_id;
         let obj = {
-            email: email,
-            name: name,
-            text: text,
-            parent_id: parent_id,
+            text,
+            parent_id,
+            user_id,
         };
+
         try {
             await Comments.create(obj);
-            return res.json({ success: true, msg: 'پیام با موفقیت ارسال شد' });
+            return res.json({ success: true, msg: 'Message has been sent' });
         } catch (err) {
             res.status(401);
-            return res.json({ success: false, msg: 'خطایی رخ داد' });
+
+            return res.json({ success: false, msg: 'An error occured' });
         }
     },
     async getComments(req, res) {
         console.log('here');
         let comments = await Comments.findAll().catch(e => {
-            return res.json({ msg: 'خطایی رخ داد' });
+            return res.json({ msg: 'An error occured' });
         });
         res.status(200).send(comments);
     },

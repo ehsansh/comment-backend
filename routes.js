@@ -1,4 +1,5 @@
+const verifyJWT = require('./middleware/verifyJWT');
 module.exports = app => {
-    // app.use('/api/register', require('./routes/register'));
-    app.use('/api/comments', require('./routes/comments'));
+    app.use('/api/comments', verifyJWT, require('./routes/comments'));
+    app.use('/api/user', require('./routes/user'));
 };

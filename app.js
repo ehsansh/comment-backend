@@ -3,6 +3,7 @@ const express = require('express');
 const app = express();
 const corsOptions = require('./config/corsOptions');
 var bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const PORT = process.env.PORT || 3500;
 
 // parse application/x-www-form-urlencoded
@@ -10,6 +11,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 // parse application/json
 app.use(bodyParser.json());
+
+app.use(cookieParser());
 
 const cors = require('cors');
 const credentials = require('./middleware/credentials');
