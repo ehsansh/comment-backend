@@ -1,19 +1,12 @@
 const { Comments } = require('../model');
 const { User } = require('../model');
-
+const { validationResult } = require('express-validator');
 module.exports = {
     async addComment(req, res) {
-        // req.check('captcha', 'کد امنیتی را وارد کنید').notEmpty();
-        // req.check('email', 'ایمیل را درست وارد کنید.').isEmail();
-        // req.check('name', 'نام خود را وارد کنید.').notEmpty();
-        // req.check('text', 'متن پیام را بنویسید.').notEmpty();
-
-        // const errors = req.validationErrors();
-        // if (errors) {
-        //     return res.status(401).send({
-        //         error: errors,
-        //     });
-        // }
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
 
         const { text, parent_id, user_id } = req.body;
 
@@ -33,7 +26,6 @@ module.exports = {
         }
     },
     async getComments(req, res) {
-        console.log('here');
         let comments = await Comments.findAll().catch(e => {
             return res.json({ msg: 'An error occured' });
         });
