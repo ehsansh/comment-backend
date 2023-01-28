@@ -2,6 +2,7 @@ const Sequelize = require('sequelize');
 const { User } = require('../model');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
+const { body, validationResult } = require('express-validator');
 require('dotenv').config();
 
 function validPassword(password, dbSalt, dbHash) {
@@ -26,33 +27,23 @@ function giveHash(password, salt) {
 }
 
 const handleRegister = async (req, res) => {
-    // req.check('email', 'ایمیل را به درستی وارد کنید.').isEmail();
-    // req.check(
-    //     'password',
-    //     'رمز عبور بایستی حداقل شامل ۸ کاراکتر باشد.'
-    // ).isLength({ min: 8 });
-    // const errors = req.validationErrors();
-    // if (errors) {
-    //     return res.status(400).send({
-    //         error: errors,
-    //     });
-    // }
-
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
     const { password, email } = req.body;
-
     const user = await User.findOne({
         where: { email },
     });
     if (user) {
         return res.status(400).json({
-            error: [
+            errors: [
                 {
                     msg: 'This email has been registered before.',
                 },
             ],
         });
     } else {
-        console.log(req.body);
         try {
             req.body.salt = await giveSalt();
             req.body.hash = await giveHash(password, req.body.salt);
@@ -62,7 +53,7 @@ const handleRegister = async (req, res) => {
             });
         } catch (err) {
             res.status(500).json({
-                error: [
+                errors: [
                     {
                         msg: 'An error has been occured please try again.',
                     },
@@ -73,13 +64,15 @@ const handleRegister = async (req, res) => {
 };
 
 const handleLogin = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
     const refreshTokenExp = 4 * 60 * 60;
 
     const { email, password } = req.body;
-    if (!email || !password)
-        return res
-            .status(401)
-            .json({ message: 'Please enter your email and password.' });
+
     const foundUser = await User.findOne({
         where: {
             email,
@@ -89,7 +82,7 @@ const handleLogin = async (req, res) => {
     if (!foundUser)
         return res
             .status(401)
-            .json({ message: 'Email and password are not valid.' }); //Unauthorized
+            .json({ errors: [{ msg: 'Email and password are not valid.' }] }); //Unauthorized
     // evaluate password
     const match = await validPassword(password, foundUser.salt, foundUser.hash);
 
@@ -131,9 +124,13 @@ const handleLogin = async (req, res) => {
             tokenExp: Date.now() + refreshTokenExp * 1000,
         });
     } else {
-        return res
-            .status(401)
-            .json({ message: 'Email and password are not valid.' }); //Unauthorized
+        return res.status(401).json({
+            errors: [
+                {
+                    msg: 'Email and password are not valid.',
+                },
+            ],
+        }); //Unauthorized
     }
 };
 
