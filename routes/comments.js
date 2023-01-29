@@ -4,6 +4,7 @@ const commentController = require('../controllers/commentController');
 
 const { body } = require('express-validator');
 
+router.post('/delete', commentController.deleteComments);
 router.get('/', commentController.getComments);
 router.post(
     '/',

@@ -10,6 +10,7 @@ module.exports = (sequelize, DataTypes) => {
             },
             user_id: DataTypes.INTEGER,
             parent_id: DataTypes.INTEGER,
+            votes: DataTypes.INTEGER,
             text: DataTypes.STRING,
         },
         {

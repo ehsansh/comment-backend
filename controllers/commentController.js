@@ -7,9 +7,7 @@ module.exports = {
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
-
         const { text, parent_id, user_id } = req.body;
-
         let obj = {
             text,
             parent_id,
@@ -26,9 +24,19 @@ module.exports = {
         }
     },
     async getComments(req, res) {
-        let comments = await Comments.findAll().catch(e => {
+        let comments = await Comments.findAll({
+            include: [{ model: User, attributes: ['name'] }],
+        }).catch(e => {
             return res.json({ msg: 'An error occured' });
         });
         res.status(200).send(comments);
+    },
+    async deleteComments(req, res) {
+        const { id } = req.body;
+        Comments.destroy({
+            where: { id },
+        }).catch(function (error) {
+            res.status(401);
+        });
     },
 };
