@@ -18,5 +18,6 @@ module.exports = (sequelize, DataTypes) => {
             freezeTableName: true,
         }
     );
+
     return Comments;
 };

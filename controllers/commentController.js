@@ -16,8 +16,8 @@ module.exports = {
         };
 
         try {
-            await Comments.create(obj);
-            return res.json({ success: true, msg: 'Message has been sent' });
+            const result = await Comments.create(obj);
+            return res.json(result);
         } catch (err) {
             res.status(401);
 
