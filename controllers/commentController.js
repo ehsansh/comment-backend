@@ -38,5 +38,14 @@ module.exports = {
         }).catch(function (error) {
             res.status(401);
         });
+        res.status(200).send({});
+    },
+    async updateComments(req, res) {
+        const { id, text } = req.body;
+        console.log(id, text);
+        await Comments.update({ text }, { where: { id } }).catch(e => {
+            res.status(401);
+        });
+        res.status(200).send({});
     },
 };
