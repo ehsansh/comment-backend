@@ -50,7 +50,7 @@ module.exports = {
         res.status(200).send({});
     },
     async changeVote(req, res) {
-        const { userId: user_id, commentId: comment_id, vote } = req.body;
+        let { userId: user_id, commentId: comment_id, vote } = req.body;
         const voteBefore = await Vote.findOne({
             where: { user_id, comment_id },
         });
@@ -68,7 +68,7 @@ module.exports = {
                 }).catch(e => {
                     res.status(401);
                 });
-            }
+            } else vote = 0;
         } else {
             await Vote.create({
                 user_id,
@@ -84,6 +84,6 @@ module.exports = {
                 res.status(401);
             });
         }
-        res.status(200).send({});
+        res.status(200).send({ vote });
     },
 };
