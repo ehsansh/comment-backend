@@ -13,6 +13,7 @@ module.exports = {
             text,
             parent_id,
             user_id,
+            votes: 0,
         };
 
         try {

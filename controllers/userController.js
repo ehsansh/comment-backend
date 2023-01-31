@@ -47,9 +47,45 @@ const handleRegister = async (req, res) => {
         try {
             req.body.salt = await giveSalt();
             req.body.hash = await giveHash(password, req.body.salt);
-            await User.create(req.body);
-            res.status(201).json({
-                msg: 'You have been registered successfully ',
+            const newUser = await User.create(req.body);
+
+            //send login info like token user info, etc.
+            const refreshTokenExp = 4 * 60 * 60;
+            const { email, name, id } = newUser;
+            const accessToken = jwt.sign(
+                {
+                    UserInfo: {
+                        name,
+                        email,
+                        id,
+                    },
+                },
+                process.env.ACCESS_TOKEN_SECRET,
+                { expiresIn: process.env.ACCESS_TOKEN_EXP }
+            );
+            const refreshToken = jwt.sign(
+                { name, email, id },
+                process.env.REFRESH_TOKEN_SECRET,
+                { expiresIn: refreshTokenExp + 's' }
+            );
+            newUser.update({ refresh_token: refreshToken });
+
+            res.cookie('jwt', refreshToken, {
+                httpOnly: true,
+                sameSite: 'None',
+                secure: true,
+                maxAge: refreshTokenExp * 1000,
+            });
+
+            //tokenExp is refresh token expiration time
+            res.json({
+                accessToken,
+                user: {
+                    name,
+                    email,
+                    id,
+                },
+                tokenExp: Date.now() + refreshTokenExp * 1000,
             });
         } catch (err) {
             res.status(500).json({
