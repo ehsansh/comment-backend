@@ -4,6 +4,8 @@ This project is inspired by [Interactive comments section challenge on Frontend 
 
 This repo is backend part of the fullstack project.
 
+Please check [comment-frontend](https://github.com/ehsansh/comment-frontend) to see frontend codes of this project
+
 ## Overview
 
 Features of this app:
