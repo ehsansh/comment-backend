@@ -34,6 +34,10 @@ module.exports = {
         res.status(200).send(comments);
     },
     async deleteComments(req, res) {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
         const { id } = req.body;
         Comments.destroy({
             where: { id },
@@ -43,15 +47,23 @@ module.exports = {
         res.status(200).send({});
     },
     async updateComments(req, res) {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
         const { id, text } = req.body;
-        console.log(id, text);
         await Comments.update({ text }, { where: { id } }).catch(e => {
             res.status(401);
         });
         res.status(200).send({});
     },
     async changeVote(req, res) {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
         let { userId: user_id, commentId: comment_id, vote } = req.body;
+        vote = parseInt(vote);
         const voteBefore = await Vote.findOne({
             where: { user_id, comment_id },
         });

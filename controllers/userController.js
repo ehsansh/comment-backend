@@ -174,9 +174,6 @@ const handleRefreshToken = async (req, res) => {
     const cookies = req.cookies;
     if (!cookies?.jwt) return res.sendStatus(401);
     const refreshToken = cookies.jwt;
-
-    // console.log('refresh tokne is:', refreshToken);
-
     const foundUser = await User.findOne({
         where: { refresh_token: refreshToken },
     });
@@ -187,7 +184,6 @@ const handleRefreshToken = async (req, res) => {
         process.env.REFRESH_TOKEN_SECRET,
         (err, decoded) => {
             if (err || foundUser.email !== decoded.email) {
-                // console.log('errrrorrrrrrrrrrrr is', err);
                 return res.sendStatus(403);
             }
 

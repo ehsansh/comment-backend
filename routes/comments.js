@@ -4,9 +4,24 @@ const commentController = require('../controllers/commentController');
 
 const { body } = require('express-validator');
 
-router.post('/vote', commentController.changeVote);
-router.post('/update', commentController.updateComments);
-router.post('/delete', commentController.deleteComments);
+router.post(
+    '/vote',
+    body('userId').not().isEmpty().isInt().escape(),
+    body('commentId').not().isEmpty().isInt().escape(),
+    body('vote').not().isEmpty().isInt().escape(),
+    commentController.changeVote
+);
+router.post(
+    '/update',
+    body('text').not().isEmpty().escape(),
+    body('id').not().isEmpty().escape(),
+    commentController.updateComments
+);
+router.post(
+    '/delete',
+    body('id').not().isEmpty().escape(),
+    commentController.deleteComments
+);
 router.get('/', commentController.getComments);
 router.post(
     '/',

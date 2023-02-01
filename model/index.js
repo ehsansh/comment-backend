@@ -9,8 +9,7 @@ const sequelize = new Sequelize(
     config.db.password,
     config.db.options
 );
-// Bookmark and History depend on Song, and User
-// so import it last
+
 ['User.js', 'Comments', 'Vote'].forEach(file => {
     const filename = path.join(__dirname, file);
     const model = require(filename)(sequelize, Sequelize.DataTypes);
